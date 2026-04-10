@@ -1,0 +1,42 @@
+# MBHB terms - added new terms to Pfeifle et al. (2025) list.
+Binary AGN
+AGN Binary
+Dual Active Galactic Nucleus
+Dual AGN
+Double AGN
+Two Active Nuclei
+Two AGN
+Dual Supermassive Black Holes
+Dual SMBH
+Quasar Pair
+Pairs of Quasars
+Binary Quasar
+Quasar Binary
+Dual Quasar
+Double Quasar
+Pairs of QSOs
+QSO Pairs
+Binary QSO
+Binary AGN/SMBH
+Binary SMBH
+Binary MBH
+Binary AGN
+AGN Binary
+SMBH Pair
+SMBH Binary
+SBHB
+SMBHB
+MBMB
+Continuous-wave source
+Binary Supermassive Black Hole
+Supermassive Binary Black Hole
+Supermassive Black Hole Binary
+Massive Binary Black Hole
+Massive Black Hole Binary
+Pair of Supermassive Black Holes
+# Recoil terms
+Recoiling AGNs/SMBHs
+Recoiling Supermassive Black Hole
+Recoiling SMBH
+Recoiling Black Hole
+Recoiling AGN
