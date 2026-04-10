@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-bobcat-sandbox.local/schemas/smbh-binary-candidates.json",
+  "title": "SMBH Binary Candidate Catalog Entry (per paper)",
+  "description": "One JSON file per paper, containing a paper-level header and a list of binary SMBH candidate entries. Each candidate records parameters extracted verbatim from the paper — no derived quantities beyond format-level unit conversions.",
+  "type": "object",
+  "required": ["bibcode", "candidates"],
+  "additionalProperties": false,
+  "properties": {
+    "bibcode": {
+      "type": "string",
+      "description": "ADS bibcode if available, otherwise a stable stem like the arXiv ID."
+    },
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": ["string", "null"] },
+        "authors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_file": {
+          "type": ["string", "null"],
+          "description": "Path (relative to repo root) of the PDF or text used for extraction."
+        },
+        "extracted_on": {
+          "type": ["string", "null"],
+          "description": "ISO-8601 date of the extraction run."
+        }
+      }
+    },
+    "candidate_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of distinct candidates recorded; must equal candidates.length."
+    },
+    "candidates": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/candidate" }
+    }
+  },
+
+  "definitions": {
+    "errorType": {
+      "type": ["string", "null"],
+      "enum": [
+        null,
+        "Assumed",
+        "Lower limit",
+        "Upper limit",
+        "Gaussian",
+        "Two sided",
+        "Range",
+        "Representative"
+      ],
+      "description": "See references/parameter_guide.md §Error types for the meaning and required error-field format of each."
+    },
+
+    "measuredValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value"],
+      "properties": {
+        "value": {
+          "type": ["number", "string", "null"],
+          "description": "Numeric value. Strings allowed only for rare cases (e.g. 'see Fig. 3'); prefer numbers."
+        },
+        "error": {
+          "type": ["number", "string", "null"],
+          "description": "Format depends on error_type. Gaussian: bare number. Lower/Upper limit: bare number (the limit itself). Two sided: string '(-x,+y)'. Range: bare number (half-width) or '(-x,+y)'. Assumed/Representative: null."
+        },
+        "error_type": { "$ref": "#/definitions/errorType" },
+        "unit": {
+          "type": ["string", "null"],
+          "description": "Human-readable unit tag. The canonical unit for each field is fixed by the schema and parameter_guide.md — this is informational."
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Optional per-field note, e.g. 'from M-sigma relation', 'derived from X-ray luminosity'."
+        }
+      }
+    },
+
+    "evidenceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "emission_line_variability",
+            "emission_line_snapshot",
+            "continuum_flux_variations",
+            "spatially_resolved_offset_or_dual_active_nucleus",
+            "pc_scale_jet_features",
+            "large_scale_jet_features",
+            "galaxy_features",
+            "gravitational_wave_emission",
+            "broad_band_SED"
+          ]
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Subcategory from references/parameter_guide.md §Evidence categories — must match the allowed notes for the chosen type."
+        },
+        "waveband": {
+          "type": ["string", "null"],
+          "enum": [null, "gamma-ray", "x-ray", "UV", "optical", "IR", "radio"]
+        }
+      }
+    },
+
+    "candidate": {
+      "type": "object",
+      "required": ["source_standard_name", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "source_standard_name": {
+          "type": ["string", "null"],
+          "description": "Primary formal name used for the source in the paper (e.g. 'SDSS J0159+0033', 'OJ 287', 'PG 1302-102')."
+        },
+        "source_nickname": {
+          "type": ["string", "null"],
+          "description": "Informal or paper-specific nickname, if different from the standard name."
+        },
+        "ra_j2000": {
+          "type": ["string", "null"],
+          "description": "Right ascension, J2000. Sexagesimal (hh:mm:ss.s) or decimal degrees as a string."
+        },
+        "dec_j2000": {
+          "type": ["string", "null"],
+          "description": "Declination, J2000. Sexagesimal (±dd:mm:ss) or decimal degrees as a string."
+        },
+        "redshift": {
+          "type": ["number", "null"],
+          "description": "Cosmological redshift. Not an asterisked parameter — a plain number."
+        },
+
+        "eccentricity":            { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "log_m1":                  { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "log_m2":                  { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "log_total_mass":          { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "log_chirp_mass":          { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "log_reduced_mass":        { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "q":                       { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "inclination_deg":         { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "semi_major_axis_pc":      { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "semi_major_axis_date_mjd":{ "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "separation_pc":           { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "period_epoch_mjd":        { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "orbital_frequency_hz":    { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+        "orbital_period_days":     { "oneOf": [{ "$ref": "#/definitions/measuredValue" }, { "type": "null" }] },
+
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/evidenceEntry" }
+        },
+
+        "summary_notes": {
+          "type": ["string", "null"],
+          "description": "Brief general summary of the candidate or any idiosyncrasies in the analysis."
+        },
+        "caveats": {
+          "type": ["string", "null"],
+          "description": "Points of uncertainty in the interpretation of the above parameters: mass provenance (dynamical vs scaling relation), figure-derived values, competing models, etc."
+        },
+        "extension_project": {
+          "type": ["string", "null"],
+          "description": "Class-project ideas (undergrad or grad) scoped to a student following up on this paper."
+        }
+      }
+    }
+  }
+}
